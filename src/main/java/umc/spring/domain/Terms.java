@@ -3,7 +3,8 @@ package umc.spring.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import umc.spring.domain.common.BaseEntity;
-import umc.spring.domain.mapping.MemberAgree;
+import umc.spring.domain.enums.TermsType;
+import umc.spring.domain.mapping.UserTerms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,23 @@ import java.util.List;
 @AllArgsConstructor
 public class Terms extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    private TermsType type;
+
+    @Column(nullable = false)
+    private Integer version;
+
+    @Column(nullable = false, length = 100)
     private String title;
 
-    private String body;
+    @Lob @Column(nullable = false)
+    private String content;
 
-    private Boolean optional;
-
-    @OneToMany(mappedBy = "terms", cascade = CascadeType.ALL)
-    private List<MemberAgree> memberAgreeList = new ArrayList<>();
+    /* 양방향 */
+    @OneToMany(mappedBy = "terms", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTerms> userTermsList = new ArrayList<>();
 }
