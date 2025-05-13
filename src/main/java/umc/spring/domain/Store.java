@@ -20,6 +20,9 @@ public class Store extends BaseEntity {
     @Lob
     private String address;
 
+    @Column(nullable = true)
+    private Float score;
+
     /* FK */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -31,4 +34,15 @@ public class Store extends BaseEntity {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MissionTemplate> missionTemplates = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Store{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", score=" + score +
+                ", region=" + (region != null ? region.getName() : "N/A") +
+                '}';
+    }
 }
