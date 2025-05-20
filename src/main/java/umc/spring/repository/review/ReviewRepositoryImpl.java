@@ -15,8 +15,6 @@ import umc.spring.web.dto.MyReviewDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-@Primary
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 

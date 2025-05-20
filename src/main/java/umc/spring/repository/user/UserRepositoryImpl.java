@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import umc.spring.web.dto.UserProfileDto;
 import umc.spring.domain.QUser;
 
-@Repository
-@Primary
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
 

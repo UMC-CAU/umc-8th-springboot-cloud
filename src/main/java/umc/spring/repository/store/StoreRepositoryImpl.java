@@ -15,8 +15,6 @@ import java.util.List;
  * 커스텀 레포지토리 구현부 – 반드시 'Impl' 로 끝나야
  * 스프링이 자동으로 연결(JPA 리포지토리 확장 규칙).
  */
-@Repository
-@Primary
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreRepositoryCustom {
 

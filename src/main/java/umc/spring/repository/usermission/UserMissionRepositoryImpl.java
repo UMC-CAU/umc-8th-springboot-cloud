@@ -18,8 +18,6 @@ import umc.spring.domain.QRegion;
 
 import java.util.List;
 
-@Repository
-@Primary
 @RequiredArgsConstructor
 public class UserMissionRepositoryImpl implements UserMissionRepositoryCustom {
 
