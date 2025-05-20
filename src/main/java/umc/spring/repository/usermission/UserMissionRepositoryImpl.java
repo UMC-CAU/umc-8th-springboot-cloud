@@ -4,6 +4,7 @@ package umc.spring.repository.usermission;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.types.Projections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import umc.spring.domain.QRegion;
 import java.util.List;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class UserMissionRepositoryImpl implements UserMissionRepositoryCustom {
 

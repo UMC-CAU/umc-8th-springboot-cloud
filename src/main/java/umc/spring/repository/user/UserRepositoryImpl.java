@@ -3,11 +3,13 @@ package umc.spring.repository.user;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.types.Projections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import umc.spring.web.dto.UserProfileDto;
 import umc.spring.domain.QUser;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
 

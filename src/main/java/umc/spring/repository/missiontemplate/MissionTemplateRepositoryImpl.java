@@ -3,6 +3,7 @@ package umc.spring.repository.missiontemplate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import umc.spring.domain.mapping.QUserMission;
 import java.util.List;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class MissionTemplateRepositoryImpl implements MissionTemplateRepositoryCustom {
 

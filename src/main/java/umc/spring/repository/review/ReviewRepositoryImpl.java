@@ -1,30 +1,33 @@
-// ReviewRepositoryImpl.java
 package umc.spring.repository.review;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.impl.JPAInsertClause;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAInsertClause;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
-import umc.spring.web.dto.MyReviewDto;
 import umc.spring.domain.QReview;
 import umc.spring.domain.QStore;
+import umc.spring.web.dto.MyReviewDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
     private final JPAQueryFactory query;
-    private final QReview r = QReview.review;
-    private final QStore s = QStore.store;
 
+    private static final QReview r = QReview.review;
+    private static final QStore  s = QStore.store;
+
+    /* --------------------------------------------------
+     * 내 리뷰 목록 조회 (Store 필터 X, 최신순)
+     * -------------------------------------------------- */
     @Override
     public Page<MyReviewDto> findMyReviews(Long userId, Pageable pageable) {
 
@@ -49,17 +52,30 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .where(r.user.id.eq(userId))
                 .fetchOne();
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(content, pageable, total == null ? 0 : total);
     }
 
+    /* --------------------------------------------------
+     * INSERT (QueryDSL JPAInsertClause 사용)
+     * -------------------------------------------------- */
     @Override
     @Transactional
     public Long insertReview(Long userId, Long storeId, String content, int rating) {
 
+        // INSERT ... VALUES (...)
         JPAInsertClause insert = query.insert(r)
-                .columns(r.content, r.rating, r.createdAt, r.store.id, r.user.id)
-                .values(content, rating, LocalDateTime.now(), storeId, userId);
+                .columns(r.content,
+                        r.rating,
+                        r.createdAt,
+                        r.store.id,
+                        r.user.id)
+                .values(content,
+                        rating,
+                        LocalDateTime.now(),
+                        storeId,
+                        userId);
 
+        // execute() → 영향 받은 row 수 / executeWithKey() → PK
         return insert.execute();
     }
 }

@@ -1,77 +1,54 @@
+/***************************
+ *   build.gradle
+ ***************************/
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'umc'
+group   = 'umc'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+	toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
-def generated = 'src/main/generated'
-
-sourceSets {
-	main {
-		java {
-			srcDirs += [generated]
-		}
-	}
-}
-
-configurations {
-	querydsl
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
-repositories {
-	mavenCentral()
-}
+/* ──────────────────────────────
+   📦  의존성
+   ────────────────────────────── */
+repositories { mavenCentral() }
 
 dependencies {
+	/* Spring */
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	runtimeOnly   'com.mysql:mysql-connector-j'
 
-	runtimeOnly 'com.mysql:mysql-connector-j'
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
+	/* Lombok */
+	compileOnly       'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// QueryDSL (Jakarta)
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	querydsl 'com.querydsl:querydsl-apt:5.0.0:jakarta'
-	querydsl 'jakarta.annotation:jakarta.annotation-api'
-	querydsl 'jakarta.persistence:jakarta.persistence-api'
-
+	/* QueryDSL (Jakarta) */
+	implementation      'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
-	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
-	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
+	/* ➡️  APT 실행 시 jakarta.* 클래스가 필요하므로 명시 */
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+	annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+	compileOnly         'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+	/* Test */
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.register("generateQuerydsl", JavaCompile) {
-	group = "build"
-	description = "Generate Q-classes for QueryDSL (jakarta)"
-	source = sourceSets.main.java
-	classpath = configurations.compileClasspath + configurations.querydsl
-	destinationDirectory.set(file(generated))
-	options.annotationProcessorPath = configurations.querydsl
-	options.compilerArgs = [
-			"-proc:only",
-			"-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
-	]
-}
+/* ──────────────────────────────
+   Gradle 7+ 기본 APT 경로:
+   build/generated/sources/annotationProcessor/java/main
+   → 따로 sourceSets에 추가하지 마세요!
+   (중복 Q-클래스 에러의 원인)
+   ────────────────────────────── */
 
-tasks.named("compileJava") {
-	dependsOn tasks.named("generateQuerydsl")
-}
+tasks.withType(Test).configureEach { useJUnitPlatform() }
