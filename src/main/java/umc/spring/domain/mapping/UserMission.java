@@ -32,4 +32,7 @@ public class UserMission extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "mission_template_id")
     private MissionTemplate missionTemplate;
+
+    public void setStatus(MissionStatus status) { this.status = status; }
+    public void setCompletedAt(LocalDateTime t) { this.completedAt = t; }
 }
